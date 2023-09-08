@@ -1,0 +1,34 @@
+[
+  {
+    "maNhaBan": "NB00099",
+    "giaBan": 3500000000,
+    "dieuKien": "Phải trả trước 70%, số tiền còn lại có thể trả góp trong vòng 3 năm.",
+    "maNha": ["N000099", "N000099"],
+    "maDiaChi": "DC00098",
+    "maLoaiNha": "LN00001",
+    "soLuongPhong": 9,
+    "ngayDang": "2023-07-05T00:00:00.000Z",
+    "ngayHetHan": "2023-09-05T00:00:00.000Z",
+    "tinhTrangNha": "Còn trống",
+    "luotXem": 72,
+    "maChuNha": "CN00099",
+    "maNVPhuTrach": "NV00003",
+    "maChiNhanh": "CNCT002"
+  },
+  {
+    "maNhaBan": "NB00100",
+    "giaBan": 25000000000,
+    "dieuKien": "Phải trả trước 50%, số tiền còn lại có thể trả góp trong vòng 1 năm.",
+    "maNha": ["N000100", "N000100"],
+    "maDiaChi": "DC00100",
+    "maLoaiNha": "LN00001",
+    "soLuongPhong": 3,
+    "ngayDang": "2023-07-05T00:00:00.000Z",
+    "ngayHetHan": "2023-09-05T00:00:00.000Z",
+    "tinhTrangNha": "Còn trống",
+    "luotXem": 12,
+    "maChuNha": "CN00099",
+    "maNVPhuTrach": "NV00003",
+    "maChiNhanh": "CNCT002"
+  }
+]
