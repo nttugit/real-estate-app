@@ -40,15 +40,30 @@ controllers.getAddressByIdWithStore = async (req, res) => {
     }
 }
 
-// 
+controllers.getOwnerRentingHouses = async (req, res) => {
+    try {
+        const { ownerId } = req.params;
+        const request = new sql.Request();
+        request.input('maChuNha', sql.VarChar, ownerId);
+        const data = await request.execute(STORE_PROCEDURES.DIRTY_READ.getOwnerSellingHousesFix);
+        const result = data ? data.recordsets : {};
+        return res.json(result);
+    } catch (err) {
+        return res.json("Error")
+    }
+}
+
+
 controllers.getOwnerSellingHouses = async (req, res) => {
     try {
         const { ownerId } = req.params;
         const request = new sql.Request();
         request.input('maChuNha', sql.VarChar, ownerId);
         const data = await request.execute(STORE_PROCEDURES.DIRTY_READ.getOwnerSellingHousesFix);
-        console.log("data", data)
-        const result = data ? data.recordsets : {};
+        const result = {};
+        if (data && data.recordsets) {
+            result.danhSachNhaBan = data.recordsets[0];
+        }
         return res.json(result);
     } catch (err) {
         return res.json("Error")
@@ -62,7 +77,10 @@ controllers.getSellingHousesByOwnerId = async (req, res) => {
         const request = new sql.Request();
         request.input('maChuNha', sql.VarChar, ownerId);
         const data = await request.execute(STORE_PROCEDURES.DIRTY_READ.getOwnerSellingHouses);
-        const result = data ? data.recordset : {};
+        const result = {};
+        if (data && data.recordsets) {
+            result.danhSachNhaBan = data.recordsets[0];
+        }
         return res.json(result);
     } catch (err) {
         return res.json("Error")
@@ -81,7 +99,7 @@ controllers.updateSellPrice = async (req, res) => {
 
         const data = await request.execute(STORE_PROCEDURES.DIRTY_READ.updateSellPrice);
 
-        let result = data?.rowsAffected > 0 ? "Update succeeded" : "Update Failed";
+        let result = data?.rowsAffected > 0 ? "Success" : "Update Failed";
 
         return res.json(result);
     } catch (err) {
@@ -98,7 +116,12 @@ controllers.getOwnerSellingHousesDirtyRead = async (req, res) => {
         const request = new sql.Request();
         request.input('maChuNha', sql.VarChar, ownerId);
         const data = await request.execute(STORE_PROCEDURES.DIRTY_READ.getOwnerSellingHouses);
-        const result = data ? data.recordset : {};
+        const result = {};
+        if (data && data.recordsets) {
+            // result.soLuongNhaChoThue = data.recordsets[0][0]["soLuongNhaChoThue"];
+            // result.chuNha = data.recordsets[0][0];
+            result.danhSachNhaBan = data.recordsets[0];
+        }
         return res.json(result);
     } catch (err) {
         return res.json("Error")
@@ -109,13 +132,21 @@ controllers.getOwnerSellingHousesDirtyRead = async (req, res) => {
 
 // CHO THUÊ NHÀ 
 
-controllers.getRentingHousesByOwnerId = async (req, res) => {
+controllers.getOwnerRentingHouses = async (req, res) => {
     try {
+        res.setHeader('Content-Type', 'application/json');
+
         const { ownerId } = req.params;
         const request = new sql.Request();
         request.input('maChuNha', sql.VarChar, ownerId);
         const data = await request.execute(STORE_PROCEDURES.COMMON.getOwnerRentingHouses);
-        const result = data ? data.recordsets : {};
+        const result = {};
+        if (data && data.recordsets) {
+            // result.soLuongNhaChoThue = data.recordsets[0][0]["soLuongNhaChoThue"];
+            result.chuNha = data.recordsets[0][0];
+            result.danhSachNhaChoThue = data.recordsets[1];
+        }
+
         return res.json(result);
     } catch (err) {
         return res.json("Error")
@@ -125,7 +156,7 @@ controllers.getRentingHousesByOwnerId = async (req, res) => {
 controllers.addARentingHouse = async (req, res) => {
     try {
         // Mã nhà cho thuê nên generate tự động 
-        const { houseId, ownerId, rentalPrice, period } = req.body;
+        const { title, houseId, ownerId, rentalPrice, period } = req.body;
         const rentingHouseId = generateID(7);
         const request = new sql.Request();
         request.input('maNha', sql.VarChar, houseId);
@@ -133,9 +164,10 @@ controllers.addARentingHouse = async (req, res) => {
         request.input('maNhaChoThue', sql.VarChar, rentingHouseId);
         request.input('tienThue1Thang', sql.Float, rentalPrice);
         request.input('thoiHanThue', sql.Int, period);
+        request.input('title', sql.NVarChar, title);
 
         const data = await request.execute(STORE_PROCEDURES.PHANTOM.addARentingHouse);
-        const result = (data && data.returnValue == 1) ? "Rollback" : (data.recordset || {});
+        const result = (data && data.returnValue == 1) ? "Rollback" : "Success";
 
         return res.json(result);
 
@@ -153,7 +185,12 @@ controllers.getRentingHousesByOwnerIdPhanTom = async (req, res) => {
         const request = new sql.Request();
         request.input('maChuNha', sql.VarChar, ownerId);
         const data = await request.execute(STORE_PROCEDURES.PHANTOM.getOwnerRentingHouses);
-        const result = data ? data.recordsets : {};
+        const result = {};
+        if (data && data.recordsets) {
+            result.chuNha = data.recordsets[0][0];
+            result.danhSachNhaChoThue = data.recordsets[1];
+        }
+
         return res.json(result);
     } catch (err) {
         return res.json("Error")
@@ -168,7 +205,12 @@ controllers.getRentingHousesByOwnerIdPhantomFix = async (req, res) => {
         const request = new sql.Request();
         request.input('maChuNha', sql.VarChar, ownerId);
         const data = await request.execute(STORE_PROCEDURES.PHANTOM.getOwnerRentingHousesFix);
-        const result = data ? data.recordsets : {};
+        const result = {};
+        if (data && data.recordsets) {
+            result.chuNha = data.recordsets[0][0];
+            result.danhSachNhaChoThue = data.recordsets[1];
+        }
+
         return res.json(result);
     } catch (err) {
         return res.json("Error")

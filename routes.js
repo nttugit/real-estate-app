@@ -10,8 +10,8 @@ router.get('/addresses-store/:id', controllers.getAddressByIdWithStore);
 
 
 
-// Danh sách nhà cho thuê của một chủ nhà
-// router.get('/renting-houses/:ownerId', controllers.getOwnerSellingHousesByOwnerAnd);
+// Danh sách nhà cho thuê của một chủ nhà (API thường)
+router.get('/renting-houses/:ownerId', controllers.getOwnerRentingHouses);
 
 
 // 4 APIS demo DIRTY READ
